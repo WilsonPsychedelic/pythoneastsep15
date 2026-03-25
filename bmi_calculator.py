@@ -1,56 +1,75 @@
-"""
-Welcome to the Body Mass Index (BMI) Calculator project!
-
-Your task is to implement a function called 'calculate_bmi' that takes
-a person's weight in kilograms and height in meters as input, and
-returns their BMI.
-
-Here's the formula you'll need:
-BMI = weight (kg) / (height (m) * height (m))
-
-Let's break it down:
-1.  **weight (kg):** This is the person's weight in kilograms.
-2.  **height (m):** This is the person's height in meters.
-3.  **height (m) * height (m):** This means height squared.
-
-Your 'calculate_bmi' function should:
--   Accept two arguments: `weight_kg` (a float or int) and `height_m` (a float or int).
--   Return the calculated BMI as a float.
--   Consider edge cases: What if height is zero or negative? How should your function handle that?
-    (Hint: You might want to return a specific value or raise an error for invalid inputs.)
-
-Good luck!
-"""
-
-# --------------------------------------------------------------------------
-# STUDENT'S TASK: Implement the calculate_bmi function below.
-# DO NOT CHANGE the function signature (name and parameters).
-# --------------------------------------------------------------------------
+import tkinter as tk
+from tkinter import messagebox
 
 def calculate_bmi(weight_kg, height_m):
     """
-    Calculates the Body Mass Index (BMI).
-
-    Args:
-        weight_kg (float or int): The person's weight in kilograms.
-        height_m (float or int): The person's height in meters.
-
-    Returns:
-        float: The calculated BMI.
-        (You might also consider returning None or raising an error for invalid inputs).
+    Calculates BMI and returns both height and weight.
     """
-    # Your code goes here!
-    # Example placeholder:
-    # if height_m <= 0:
-    #     return None # Or raise ValueError("Height cannot be zero or negative.")
-    # bmi = weight_kg / (height_m ** 2)
-    # return bmi
-    pass # Remove this line when you start implementing
+    if height_m <= 0:
+        raise ValueError("Height must be greater than zero.")
+    if weight_kg < 0:
+        raise ValueError("Weight cannot be negative.")
+    
+    return weight_kg / (height_m ** 2)
 
-# --------------------------------------------------------------------------
-# You can add example usage here to test your function manually (optional)
-# if __name__ == "__main__":
-#     print("BMI for 70kg, 1.75m:", calculate_bmi(70, 1.75))
-#     print("BMI for 0kg, 1.75m:", calculate_bmi(0, 1.75))
-#     print("BMI for 70kg, 0m:", calculate_bmi(70, 0))
-# --------------------------------------------------------------------------
+def bmi_category(bmi):
+    """
+    Determines BMI category.
+    """
+    if bmi < 18.5:
+        return "Underweight"
+    elif bmi < 25:
+        return "Normal weight"
+    elif bmi < 30:
+        return "Overweight"
+    else:
+        return "Obese"
+
+def bmi_report(weight_kg, height_m):
+    """
+    Returns BMI value and category as a tuple.
+    """
+    bmi = calculate_bmi(weight_kg, height_m)
+    category = bmi_category(bmi)
+    return bmi, category
+
+def on_calculate():
+    try:
+        weight = float(weight_entry.get())
+        height = float(height_entry.get())
+
+        bmi, category = bmi_report(weight, height)
+        result_label.config(text=f"Your BMI is {bmi:.2f}\nCategory: {category}")
+
+    except ValueError as e:
+        messagebox.showerror("Input Error", str(e))
+
+# Create main window
+root =  tk.Tk()
+root.title("BMI Calculator")
+root.geometry("300x250")
+
+#Weight input
+weight_label = tk.Label(root, text="Weight (kg):")
+weight_label.pack(pady=(15, 5))
+
+weight_entry = tk.Entry(root)
+weight_entry.pack()
+
+# Height input
+height_label = tk.Label(root, text="Height (m):")
+height_label.pack(pady=(10, 5))
+
+height_entry = tk.Entry(root)
+height_entry.pack()
+
+# Calculate button
+calculate_button = tk.Button(root, text="Calculate BMI", command=on_calculate)
+calculate_button.pack(pady=15)
+
+# Result label
+result_label = tk.Label(root, text="", font=("Arial", 12))
+result_label.pack(pady=10)
+
+# Start app
+root.mainloop()
